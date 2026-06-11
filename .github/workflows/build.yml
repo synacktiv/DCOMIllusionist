@@ -1,0 +1,39 @@
+name: Build DCOMIllusionist
+
+on:
+  workflow_call:
+    inputs:
+      commit_sha:
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha || 'refs/heads/main' }}
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore DCOMIllusionist.sln
+
+      - name: Build solution
+        run: msbuild DCOMIllusionist.sln /p:Configuration=Release /p:Platform=x64
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: DCOMIllusionist-build-binaries
+          path: |
+            ./DCOMIllusionist/bin/x64/Release/DCOMIllusionist.exe

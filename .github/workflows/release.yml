@@ -1,0 +1,49 @@
+name: Build and Release DCOMIllusionist
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag to release (e.g., v1.0.0)'
+        required: true
+      sha:
+        description: "Commit SHA to build from (defaults to latest on default branch)."
+        default: ""
+        type: string
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      commit_sha: ${{ github.event.inputs.sha || github.sha }}
+
+  publish-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DCOMIllusionist-build-binaries
+          path: ./release
+
+      - name: Create Release and Upload
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          overwrite_files: true
+          make_latest: true
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          files: ./release/*
+          body: |
+            ## 🎩 DCOMIllusionist Release `${{ github.event.inputs.tag_name || github.ref_name }}`
+            
+            DCOM fileless latteral movement technique.
