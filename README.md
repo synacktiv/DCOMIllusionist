@@ -7,7 +7,7 @@
 </h1>
 
 <p align="center">
-   Windows fileless latteral movement technique.
+   Windows fileless lateral movement technique.
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@ More details in [this section](#technical-details).
 A release is available, or you can build it manually:
 
 ```powershell
-PS F:\> git clone https://github.com/Hug0Vincent/DCOMIllusionist.git
+PS F:\> git clone https://github.com/synacktiv/DCOMIllusionist.git
 PS F:\> cd DCOMIllusionist
 PS F:\DCOMIllusionist> dotnet publish -c Release -r win-x64
 
